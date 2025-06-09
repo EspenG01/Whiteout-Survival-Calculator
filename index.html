@@ -134,64 +134,54 @@
 
   <script>
     const heroLevels = [
-      "0", "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5",
-      "2", "2.1", "2.2", "2.3", "2.4", "2.5", "3", "3.1", "3.2", "3.3", "3.4", "3.5",
-      "4", "4.1"
-    ];
+  "0", "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5",
+  "2", "2.1", "2.2", "2.3", "2.4", "2.5", "3", "3.1", "3.2", "3.3", "3.4", "3.5",
+  "4", "4.1", "4.2", "4.3", "4.4", "4.5", "5"
+];
 
-    const heroData = [
-      { HeroShards: 0, HeroWidgets: 0 },
-      { HeroShards: 1, HeroWidgets: 1 },
-      { HeroShards: 1, HeroWidgets: 2 },
-      { HeroShards: 2, HeroWidgets: 3 },
-      { HeroShards: 2, HeroWidgets: 4 },
-      { HeroShards: 2, HeroWidgets: 5 },
-      { HeroShards: 2, HeroWidgets: 6 },
-      { HeroShards: 5, HeroWidgets: 7 },
-      { HeroShards: 5, HeroWidgets: 8 },
-      { HeroShards: 5, HeroWidgets: 9 },
-      { HeroShards: 5, HeroWidgets: 10 },
-      { HeroShards: 5, HeroWidgets: 11 },
-      { HeroShards: 5, HeroWidgets: 12 },
-      { HeroShards: 8, HeroWidgets: 13 },
-      { HeroShards: 8, HeroWidgets: 14 },
-      { HeroShards: 8, HeroWidgets: 15 },
-      { HeroShards: 8, HeroWidgets: 16 },
-      { HeroShards: 8, HeroWidgets: 17 },
-      { HeroShards: 8, HeroWidgets: 18 },
-      { HeroShards: 10, HeroWidgets: 19 },
-      { HeroShards: 10, HeroWidgets: 20 },
-      { HeroShards: 10, HeroWidgets: 21 },
-      { HeroShards: 10, HeroWidgets: 22 },
-      { HeroShards: 10, HeroWidgets: 23 },
-      { HeroShards: 10, HeroWidgets: 24 },
-      { HeroShards: 15, HeroWidgets: 25 }
-    ];
+    const heroShardData = [
+  0, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5,
+  5, 15, 15, 15, 15, 15, 15,
+  40, 40, 40, 40, 40, 40,
+  100, 100, 100, 100, 100, 100, 100
+];
+
+const heroWidgetData = [
+  0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+];
 
     heroLevels.forEach(lvl => {
-      document.getElementById("currentHeroShard").appendChild(new Option(lvl, lvl));
-      document.getElementById("desiredHeroShard").appendChild(new Option(lvl, lvl));
-      document.getElementById("currentHeroWidget").appendChild(new Option(lvl, lvl));
-      document.getElementById("desiredHeroWidget").appendChild(new Option(lvl, lvl));
-    });
+  document.getElementById("currentHeroShard").appendChild(new Option(lvl, lvl));
+  document.getElementById("desiredHeroShard").appendChild(new Option(lvl, lvl));
+});
+
+for (let i = 0; i <= 10; i++) {
+  const lvl = i.toString();
+  document.getElementById("currentHeroWidget").appendChild(new Option(lvl, lvl));
+  document.getElementById("desiredHeroWidget").appendChild(new Option(lvl, lvl));
+}
 
     function calculateHeroShards() {
-      const current = heroLevels.indexOf(document.getElementById("currentHeroShard").value);
-      const desired = heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
-      let shards = 0;
-      for (let i = current + 1; i <= desired; i++) {
-        shards += heroData[i].HeroShards;
-      }
+  const current = heroLevels.indexOf(document.getElementById("currentHeroShard").value);
+  const desired = heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
+  let shards = 0;
+  for (let i = current + 1; i <= desired; i++) {
+    shards += heroShardData[i] || 0;
+  }
+  document.getElementById("heroShardResult").innerText = `Total Hero Shards: ${shards}`;
+}
       document.getElementById("heroShardResult").innerText = `Total Hero Shards: ${shards}`;
     }
 
     function calculateHeroWidgets() {
-      const current = heroLevels.indexOf(document.getElementById("currentHeroWidget").value);
-      const desired = heroLevels.indexOf(document.getElementById("desiredHeroWidget").value);
-      let widgets = 0;
-      for (let i = current + 1; i <= desired; i++) {
-        widgets += heroData[i].HeroWidgets;
-      }
+  const current = parseInt(document.getElementById("currentHeroWidget").value);
+  const desired = parseInt(document.getElementById("desiredHeroWidget").value);
+  let widgets = 0;
+  for (let i = current + 1; i <= desired; i++) {
+    widgets += heroWidgetData[i] || 0;
+  }
+  document.getElementById("heroWidgetResult").innerText = `Total Hero Widgets: ${widgets}`;
+}
       document.getElementById("heroWidgetResult").innerText = `Total Hero Widgets: ${widgets}`;
     }
 
