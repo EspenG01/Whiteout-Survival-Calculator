@@ -52,8 +52,21 @@
     <button onclick="showTab('heroWidgets')">Hero Widgets</button>
   </div>
 
+  <!-- BUILDINGS TAB -->
   <div id="buildings" class="tab active">
     <h2>Building Resource Calculator</h2>
+    <label>Building Type:
+      <select id="buildingType">
+        <option>Furnace</option>
+        <option>Embassy</option>
+        <option>Infantry</option>
+        <option>Marksman</option>
+        <option>Lancer</option>
+        <option>CC</option>
+        <option>Infirmary</option>
+        <option>War Academy</option>
+      </select>
+    </label>
     <label>Current Level:
       <select id="currentLevel"></select>
     </label>
@@ -64,28 +77,20 @@
     <div class="result" id="buildingResult"></div>
   </div>
 
+  <!-- GEAR TAB -->
   <div id="gear" class="tab">
     <h2>Chief Gear Calculator</h2>
     <label>Current Gear Level:
-      <select id="currentGear">
-        <option>0</option>
-        <option>Green</option>
-        <option>Green 1*</option>
-        <option>Blue</option>
-      </select>
+      <select id="currentGear"></select>
     </label>
     <label>Desired Gear Level:
-      <select id="desiredGear">
-        <option>0</option>
-        <option>Green</option>
-        <option>Green 1*</option>
-        <option>Blue</option>
-      </select>
+      <select id="desiredGear"></select>
     </label>
     <button onclick="calculateGear()">Calculate</button>
     <div class="result" id="gearResult"></div>
   </div>
 
+  <!-- CHARMS TAB -->
   <div id="charms" class="tab">
     <h2>Charm Calculator</h2>
     <label>Current Charm Level:
@@ -98,6 +103,7 @@
     <div class="result" id="charmResult"></div>
   </div>
 
+  <!-- HERO SHARDS TAB -->
   <div id="heroShards" class="tab">
     <h2>Hero Shards Calculator</h2>
     <label>Current Hero Level:
@@ -110,6 +116,7 @@
     <div class="result" id="heroShardResult"></div>
   </div>
 
+  <!-- HERO WIDGETS TAB -->
   <div id="heroWidgets" class="tab">
     <h2>Hero Widgets Calculator</h2>
     <label>Current Widget Level:
@@ -123,128 +130,155 @@
   </div>
 
   <script>
+    // DATA ARRAYS
     const buildingLevels = [
-      "Fc5", "Fc5-1", "Fc5-2", "Fc5-3", "Fc5-4", "Fc6", "Fc6-1", "Fc6-2", "Fc6-3", "Fc6-4",
-      "Fc7", "Fc7-1", "Fc7-2", "Fc7-3", "Fc7-4", "Fc8", "Fc8-1", "Fc8-2", "Fc8-3", "Fc8-4",
-      "Fc9", "Fc9-1", "Fc9-2", "Fc9-3", "Fc9-4", "Fc10"
+      "Fc5","Fc5-1","Fc5-2","Fc5-3","Fc5-4","Fc6","Fc6-1","Fc6-2","Fc6-3","Fc6-4",
+      "Fc7","Fc7-1","Fc7-2","Fc7-3","Fc7-4","Fc8","Fc8-1","Fc8-2","Fc8-3","Fc8-4",
+      "Fc9","Fc9-1","Fc9-2","Fc9-3","Fc9-4","Fc10"
+    ];
+    const fcCosts = {
+      "Fc5":0,"Fc5-1":200,"Fc5-2":200,"Fc5-3":200,"Fc5-4":200,
+      "Fc6":100,"Fc6-1":240,"Fc6-2":240,"Fc6-3":240,"Fc6-4":240,
+      "Fc7":120,"Fc7-1":240,"Fc7-2":240,"Fc7-3":240,"Fc7-4":240,
+      "Fc8":120,"Fc8-1":280,"Fc8-2":280,"Fc8-3":280,"Fc8-4":280,
+      "Fc9":140,"Fc9-1":350,"Fc9-2":350,"Fc9-3":350,"Fc9-4":350,
+      "Fc10":175
+    };
+    const rfcCosts = {
+      "Fc5":0,"Fc5-1":10,"Fc5-2":10,"Fc5-3":10,"Fc5-4":10,
+      "Fc6":20,"Fc6-1":30,"Fc6-2":30,"Fc6-3":30,"Fc6-4":30,
+      "Fc7":20,"Fc7-1":30,"Fc7-2":30,"Fc7-3":30,"Fc7-4":30,
+      "Fc8":40,"Fc8-1":30,"Fc8-2":30,"Fc8-3":30,"Fc8-4":30,
+      "Fc9":60,"Fc9-1":70,"Fc9-2":70,"Fc9-3":70,"Fc9-4":70,
+      "Fc10":140
+    };
+
+    const gearLevels = [
+      "0","Green","Green 1*","Blue","Blue 1*","Blue 2*","Blue 3*",
+      "Purple","Purple 1*","Purple 2*","Purple 3*","Purple T1","Purple T1 1*","Purple T1 2*","Purple T1 3*",
+      "Gold","Gold 1*","Gold 2*","Gold 3*","Gold T1","Gold T1 1*","Gold T1 2*","Gold T1 3*",
+      "Gold T2","Gold T2 1*","Gold T2 2*","Gold T2 3*",
+      "Red","Red 1*","Red 2*","Red 3*","Red T1","Red T1 1*","Red T1 2*","Red T1 3*",
+      "Red T2","Red T2 1*","Red T2 2*","Red T2 3*",
+      "Red T3","Red T3 1*","Red T3 2*","Red T3 3*"
+    ];
+    const gearData = [
+      {Alloy:1500,Polish:15,Plans:0,Amber:0},{Alloy:3800,Polish:40,Plans:0,Amber:0},
+      {Alloy:7000,Polish:70,Plans:0,Amber:0},{Alloy:9700,Polish:95,Plans:0,Amber:0},
+      {Alloy:0,Polish:0,Plans:45,Amber:0},{Alloy:0,Polish:0,Plans:50,Amber:0},
+      {Alloy:0,Polish:0,Plans:60,Amber:0},{Alloy:0,Polish:0,Plans:70,Amber:0},
+      {Alloy:6500,Polish:65,Plans:40,Amber:0},{Alloy:8000,Polish:80,Plans:50,Amber:0},
+      {Alloy:10000,Polish:95,Plans:60,Amber:0},{Alloy:11000,Polish:110,Plans:70,Amber:0},
+      {Alloy:13000,Polish:130,Plans:85,Amber:0},{Alloy:15000,Polish:160,Plans:100,Amber:0},
+      {Alloy:22000,Polish:220,Plans:40,Amber:0},{Alloy:23000,Polish:230,Plans:40,Amber:0},
+      {Alloy:25000,Polish:250,Plans:45,Amber:0},{Alloy:26000,Polish:260,Plans:45,Amber:0},
+      {Alloy:28000,Polish:280,Plans:45,Amber:0},{Alloy:30000,Polish:300,Plans:55,Amber:0},
+      {Alloy:32000,Polish:320,Plans:55,Amber:0},{Alloy:35000,Polish:340,Plans:55,Amber:0},
+      {Alloy:38000,Polish:360,Plans:55,Amber:0},{Alloy:43000,Polish:430,Plans:75,Amber:0},
+      {Alloy:45000,Polish:460,Plans:80,Amber:0},{Alloy:48000,Polish:500,Plans:85,Amber:0},
+      {Alloy:50000,Polish:530,Plans:85,Amber:10},{Alloy:52000,Polish:560,Plans:90,Amber:10},
+      {Alloy:54000,Polish:590,Plans:95,Amber:10},{Alloy:56000,Polish:620,Plans:100,Amber:10},
+      {Alloy:59000,Polish:670,Plans:110,Amber:15},{Alloy:61000,Polish:700,Plans:115,Amber:15},
+      {Alloy:63000,Polish:730,Plans:120,Amber:15},{Alloy:65000,Polish:760,Plans:125,Amber:15},
+      {Alloy:68000,Polish:810,Plans:135,Amber:20},{Alloy:70000,Polish:840,Plans:140,Amber:20},
+      {Alloy:72000,Polish:870,Plans:145,Amber:20},{Alloy:74000,Polish:900,Plans:150,Amber:20},
+      {Alloy:77000,Polish:950,Plans:160,Amber:25},{Alloy:80000,Polish:990,Plans:165,Amber:25},
+      {Alloy:83000,Polish:1030,Plans:170,Amber:25},{Alloy:86000,Polish:1070,Plans:180,Amber:25}
     ];
 
-    const fcCosts = {
-      "Fc5": 0, "Fc5-1": 200, "Fc5-2": 200, "Fc5-3": 200, "Fc5-4": 200,
-      "Fc6": 100, "Fc6-1": 240, "Fc6-2": 240, "Fc6-3": 240, "Fc6-4": 240,
-      "Fc7": 120, "Fc7-1": 240, "Fc7-2": 240, "Fc7-3": 240, "Fc7-4": 240,
-      "Fc8": 120, "Fc8-1": 280, "Fc8-2": 280, "Fc8-3": 280, "Fc8-4": 280,
-      "Fc9": 140, "Fc9-1": 350, "Fc9-2": 350, "Fc9-3": 350, "Fc9-4": 350,
-      "Fc10": 175
-    };
-
-    const rfcCosts = {
-      "Fc5": 0, "Fc5-1": 10, "Fc5-2": 10, "Fc5-3": 10, "Fc5-4": 10,
-      "Fc6": 20, "Fc6-1": 30, "Fc6-2": 30, "Fc6-3": 30, "Fc6-4": 30,
-      "Fc7": 20, "Fc7-1": 30, "Fc7-2": 30, "Fc7-3": 30, "Fc7-4": 30,
-      "Fc8": 40, "Fc8-1": 30, "Fc8-2": 30, "Fc8-3": 30, "Fc8-4": 30,
-      "Fc9": 60, "Fc9-1": 70, "Fc9-2": 70, "Fc9-3": 70, "Fc9-4": 70,
-      "Fc10": 140
-    };
-
     const charmData = [
-      { Guides: 5, Designs: 5, Secrets: 0 },
-      { Guides: 40, Designs: 15, Secrets: 0 },
-      { Guides: 60, Designs: 40, Secrets: 0 },
-      { Guides: 80, Designs: 100, Secrets: 0 },
-      { Guides: 100, Designs: 200, Secrets: 0 },
-      { Guides: 120, Designs: 300, Secrets: 0 },
-      { Guides: 140, Designs: 400, Secrets: 0 },
-      { Guides: 200, Designs: 400, Secrets: 0 },
-      { Guides: 300, Designs: 400, Secrets: 0 },
-      { Guides: 420, Designs: 420, Secrets: 0 },
-      { Guides: 560, Designs: 420, Secrets: 0 },
-      { Guides: 580, Designs: 450, Secrets: 15 },
-      { Guides: 580, Designs: 450, Secrets: 30 },
-      { Guides: 600, Designs: 500, Secrets: 45 },
-      { Guides: 600, Designs: 500, Secrets: 70 },
-      { Guides: 650, Designs: 550, Secrets: 100 }
+      {Guides:5,Designs:5,Secrets:0},{Guides:40,Designs:15,Secrets:0},
+      {Guides:60,Designs:40,Secrets:0},{Guides:80,Designs:100,Secrets:0},
+      {Guides:100,Designs:200,Secrets:0},{Guides:120,Designs:300,Secrets:0},
+      {Guides:140,Designs:400,Secrets:0},{Guides:200,Designs:400,Secrets:0},
+      {Guides:300,Designs:400,Secrets:0},{Guides:420,Designs:420,Secrets:0},
+      {Guides:560,Designs:420,Secrets:0},{Guides:580,Designs:450,Secrets:15},
+      {Guides:580,Designs:450,Secrets:30},{Guides:600,Designs:500,Secrets:45},
+      {Guides:600,Designs:500,Secrets:70},{Guides:650,Designs:550,Secrets:100}
     ];
 
     const heroLevels = [
-      "0", "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5",
-      "2", "2.1", "2.2", "2.3", "2.4", "2.5", "3", "3.1", "3.2", "3.3", "3.4", "3.5",
-      "4", "4.1", "4.2", "4.3", "4.4", "4.5", "5"
+      "0","0.1","0.2","0.3","0.4","0.5","1","1.1","1.2","1.3","1.4","1.5",
+      "2","2.1","2.2","2.3","2.4","2.5","3","3.1","3.2","3.3","3.4","3.5",
+      "4","4.1","4.2","4.3","4.4","4.5","5"
     ];
-
     const heroShardData = [
-      0, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5,
-      5, 15, 15, 15, 15, 15, 15,
-      40, 40, 40, 40, 40, 40,
-      100, 100, 100, 100, 100, 100, 100
+      0,1,1,2,2,2,2,5,5,5,5,5,15,15,15,15,15,15,
+      40,40,40,40,40,40,100,100,100,100,100,100,100
     ];
+    const heroWidgetData = [0,5,10,15,20,25,30,35,40,45,50];
 
-    const heroWidgetData = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
-
-    // Populate dropdowns on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      const fill = (id, data) => {
-        const select = document.getElementById(id);
-        data.forEach(v => select.appendChild(new Option(v, v)));
-      };
-      fill("currentLevel", buildingLevels);
-      fill("desiredLevel", buildingLevels);
-      fill("currentCharm", [...Array(16).keys()]);
-      fill("desiredCharm", [...Array(16).keys()]);
-      fill("currentHeroShard", heroLevels);
-      fill("desiredHeroShard", heroLevels);
-      fill("currentHeroWidget", [...Array(11).keys()]);
-      fill("desiredHeroWidget", [...Array(11).keys()]);
+    // ON LOAD: populate all selects
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const fill=(id,data)=>data.forEach(v=>document.getElementById(id).appendChild(new Option(v,v)));
+      fill("currentLevel", buildingLevels); fill("desiredLevel", buildingLevels);
+      fill("currentGear", gearLevels); fill("desiredGear", gearLevels);
+      fill("currentCharm", [...Array(charmData.length).keys()]); fill("desiredCharm", [...Array(charmData.length).keys()]);
+      fill("currentHeroShard", heroLevels); fill("desiredHeroShard", heroLevels);
+      fill("currentHeroWidget", [...Array(heroWidgetData.length).keys()]); fill("desiredHeroWidget", [...Array(heroWidgetData.length).keys()]);
     });
 
+    // TAB SWITCH
     function showTab(id) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelector(`.tabs button[onclick="showTab('${id}')"]`).classList.add('active');
     }
 
-    function calculateFCs() {
-      const c = buildingLevels.indexOf(document.getElementById("currentLevel").value);
-      const d = buildingLevels.indexOf(document.getElementById("desiredLevel").value);
-      let fc = 0, rfc = 0;
-      for (let i = c + 1; i <= d; i++) {
-        fc += fcCosts[buildingLevels[i]] || 0;
-        rfc += rfcCosts[buildingLevels[i]] || 0;
+    // CALCULATORS
+    function calculateFCs(){
+      const b=document.getElementById("buildingType").value;
+      const c=buildingLevels.indexOf(document.getElementById("currentLevel").value);
+      const d=buildingLevels.indexOf(document.getElementById("desiredLevel").value);
+      let fc=0,rfc=0;
+      for(let i=c+1;i<=d;i++){
+        fc+=fcCosts[buildingLevels[i]]||0;
+        rfc+=rfcCosts[buildingLevels[i]]||0;
       }
-      document.getElementById("buildingResult").innerHTML = `Fire Crystals: ${fc}<br>Refined Fire Crystals: ${rfc}`;
+      document.getElementById("buildingResult").innerHTML=
+        `Building: ${b}<br>Fire Crystals: ${fc}<br>Refined Fire Crystals: ${rfc}`;
     }
 
-    function calculateCharms() {
-      const c = parseInt(document.getElementById("currentCharm").value);
-      const d = parseInt(document.getElementById("desiredCharm").value);
-      let guides = 0, designs = 0, secrets = 0;
-      for (let i = c; i < d; i++) {
-        guides += charmData[i]?.Guides || 0;
-        designs += charmData[i]?.Designs || 0;
-        secrets += charmData[i]?.Secrets || 0;
+    function calculateGear(){
+      const c=gearLevels.indexOf(document.getElementById("currentGear").value);
+      const d=gearLevels.indexOf(document.getElementById("desiredGear").value);
+      let A=0,P=0,L=0,Am=0;
+      for(let i=c+1;i<=d;i++){
+        const g=gearData[i]||{};
+        A+=g.Alloy; P+=g.Polish; L+=g.Plans; Am+=g.Amber;
       }
-      document.getElementById("charmResult").innerHTML = `Guides: ${guides}<br>Designs: ${designs}<br>Secrets: ${secrets}`;
+      document.getElementById("gearResult").innerHTML=
+        `Alloy: ${A}<br>Polish: ${P}<br>Plans: ${L}<br>Amber: ${Am}`;
     }
 
-    function calculateHeroShards() {
-      const c = heroLevels.indexOf(document.getElementById("currentHeroShard").value);
-      const d = heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
-      let total = 0;
-      for (let i = c + 1; i <= d; i++) total += heroShardData[i] || 0;
-      document.getElementById("heroShardResult").innerText = `Total Hero Shards: ${total}`;
+    function calculateCharms(){
+      const c=parseInt(document.getElementById("currentCharm").value);
+      const d=parseInt(document.getElementById("desiredCharm").value);
+      let G=0,D=0,S=0;
+      for(let i=c;i<d;i++){
+        G+=charmData[i]?.Guides||0;
+        D+=charmData[i]?.Designs||0;
+        S+=charmData[i]?.Secrets||0;
+      }
+      document.getElementById("charmResult").innerHTML=
+        `Guides: ${G}<br>Designs: ${D}<br>Secrets: ${S}`;
     }
 
-    function calculateHeroWidgets() {
-      const c = parseInt(document.getElementById("currentHeroWidget").value);
-      const d = parseInt(document.getElementById("desiredHeroWidget").value);
-      let total = 0;
-      for (let i = c + 1; i <= d; i++) total += heroWidgetData[i] || 0;
-      document.getElementById("heroWidgetResult").innerText = `Total Hero Widgets: ${total}`;
+    function calculateHeroShards(){
+      const c=heroLevels.indexOf(document.getElementById("currentHeroShard").value);
+      const d=heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
+      let sum=0;
+      for(let i=c+1;i<=d;i++) sum+=heroShardData[i]||0;
+      document.getElementById("heroShardResult").innerText=`Total Hero Shards: ${sum}`;
     }
 
-    function calculateGear() {
-      document.getElementById("gearResult").innerText = "Gear calculator is a placeholder. Extend as needed.";
+    function calculateHeroWidgets(){
+      const c=parseInt(document.getElementById("currentHeroWidget").value);
+      const d=parseInt(document.getElementById("desiredHeroWidget").value);
+      let sum=0;
+      for(let i=c+1;i<=d;i++) sum+=heroWidgetData[i]||0;
+      document.getElementById("heroWidgetResult").innerText=`Total Hero Widgets: ${sum}`;
     }
   </script>
 </body>
