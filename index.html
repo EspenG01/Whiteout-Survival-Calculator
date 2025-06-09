@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whiteout Survival Upgrade Planner</title>
   <style>
     body {
@@ -45,70 +45,11 @@
 <body>
   <h1>Whiteout Survival Upgrade Planner</h1>
   <div class="tabs">
-    <button onclick="showTab('buildings')" class="active">Buildings</button>
-    <button onclick="showTab('gear')">Chief Gear</button>
-    <button onclick="showTab('charms')">Charms</button>
-    <button onclick="showTab('heroShards')">Hero Shards</button>
+    <button onclick="showTab('heroShards')" class="active">Hero Shards</button>
     <button onclick="showTab('heroWidgets')">Hero Widgets</button>
   </div>
 
-  <div id="buildings" class="tab active">
-    <h2>Building Upgrade Resource Calculator</h2>
-    <label>Building:
-      <select id="buildingSelect">
-        <option>Furnace</option>
-        <option>Embassy</option>
-        <option>Infantry</option>
-        <option>Marksman</option>
-        <option>Lancer</option>
-        <option>CC</option>
-        <option>Infirmary</option>
-        <option>War Academy</option>
-      </select>
-    </label>
-    <label>Current Level:
-      <select id="currentLevel"></select>
-    </label>
-    <label>Desired Level:
-      <select id="desiredLevel"></select>
-    </label>
-    <button onclick="calculateFCs()">Calculate</button>
-    <div class="result" id="buildingResult"></div>
-  </div>
-
-  <div id="gear" class="tab">
-    <h2>Chief Gear Upgrade Calculator</h2>
-    <label>Current Gear:
-      <select id="currentGear">
-        <option>0</option>
-      </select>
-    </label>
-    <label>Desired Gear:
-      <select id="desiredGear">
-        <option>0</option>
-      </select>
-    </label>
-    <button onclick="calculateGear()">Calculate</button>
-    <div class="result" id="gearResult"></div>
-  </div>
-
-  <div id="charms" class="tab">
-    <h2>Charm Upgrade Calculator</h2>
-    <label>Current Charm Level:
-      <select id="currentCharm">
-        <option>0</option>
-      </select>
-    </label>
-    <label>Desired Charm Level:
-      <select id="desiredCharm">
-        <option>0</option>
-      </select>
-    </label>
-    <button onclick="calculateCharms()">Calculate</button>
-    <div class="result" id="charmResult"></div>
-  </div>
-
-  <div id="heroShards" class="tab">
+  <div id="heroShards" class="tab active">
     <h2>Hero Shards Calculator</h2>
     <label>Current Hero Level:
       <select id="currentHeroShard"></select>
@@ -122,10 +63,10 @@
 
   <div id="heroWidgets" class="tab">
     <h2>Hero Widgets Calculator</h2>
-    <label>Current Hero Level:
+    <label>Current Widget Level:
       <select id="currentHeroWidget"></select>
     </label>
-    <label>Desired Hero Level:
+    <label>Desired Widget Level:
       <select id="desiredHeroWidget"></select>
     </label>
     <button onclick="calculateHeroWidgets()">Calculate</button>
@@ -134,54 +75,56 @@
 
   <script>
     const heroLevels = [
-  "0", "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5",
-  "2", "2.1", "2.2", "2.3", "2.4", "2.5", "3", "3.1", "3.2", "3.3", "3.4", "3.5",
-  "4", "4.1", "4.2", "4.3", "4.4", "4.5", "5"
-];
+      "0", "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5",
+      "2", "2.1", "2.2", "2.3", "2.4", "2.5", "3", "3.1", "3.2", "3.3", "3.4", "3.5",
+      "4", "4.1", "4.2", "4.3", "4.4", "4.5", "5"
+    ];
 
     const heroShardData = [
-  0, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5,
-  5, 15, 15, 15, 15, 15, 15,
-  40, 40, 40, 40, 40, 40,
-  100, 100, 100, 100, 100, 100, 100
-];
+      0, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5,
+      5, 15, 15, 15, 15, 15, 15,
+      40, 40, 40, 40, 40, 40,
+      100, 100, 100, 100, 100, 100, 100
+    ];
 
-const heroWidgetData = [
-  0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
-];
+    const heroWidgetData = [
+      0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+    ];
 
-    heroLevels.forEach(lvl => {
-  document.getElementById("currentHeroShard").appendChild(new Option(lvl, lvl));
-  document.getElementById("desiredHeroShard").appendChild(new Option(lvl, lvl));
-});
+    function populateSelect(id, data) {
+      const select = document.getElementById(id);
+      data.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.text = value;
+        select.appendChild(option);
+      });
+    }
 
-for (let i = 0; i <= 10; i++) {
-  const lvl = i.toString();
-  document.getElementById("currentHeroWidget").appendChild(new Option(lvl, lvl));
-  document.getElementById("desiredHeroWidget").appendChild(new Option(lvl, lvl));
-}
+    document.addEventListener('DOMContentLoaded', () => {
+      populateSelect("currentHeroShard", heroLevels);
+      populateSelect("desiredHeroShard", heroLevels);
+      populateSelect("currentHeroWidget", [...Array(11).keys()].map(String));
+      populateSelect("desiredHeroWidget", [...Array(11).keys()].map(String));
+    });
 
     function calculateHeroShards() {
-  const current = heroLevels.indexOf(document.getElementById("currentHeroShard").value);
-  const desired = heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
-  let shards = 0;
-  for (let i = current + 1; i <= desired; i++) {
-    shards += heroShardData[i] || 0;
-  }
-  document.getElementById("heroShardResult").innerText = `Total Hero Shards: ${shards}`;
-}
+      const current = heroLevels.indexOf(document.getElementById("currentHeroShard").value);
+      const desired = heroLevels.indexOf(document.getElementById("desiredHeroShard").value);
+      let shards = 0;
+      for (let i = current + 1; i <= desired; i++) {
+        shards += heroShardData[i] || 0;
+      }
       document.getElementById("heroShardResult").innerText = `Total Hero Shards: ${shards}`;
     }
 
     function calculateHeroWidgets() {
-  const current = parseInt(document.getElementById("currentHeroWidget").value);
-  const desired = parseInt(document.getElementById("desiredHeroWidget").value);
-  let widgets = 0;
-  for (let i = current + 1; i <= desired; i++) {
-    widgets += heroWidgetData[i] || 0;
-  }
-  document.getElementById("heroWidgetResult").innerText = `Total Hero Widgets: ${widgets}`;
-}
+      const current = parseInt(document.getElementById("currentHeroWidget").value);
+      const desired = parseInt(document.getElementById("desiredHeroWidget").value);
+      let widgets = 0;
+      for (let i = current + 1; i <= desired; i++) {
+        widgets += heroWidgetData[i] || 0;
+      }
       document.getElementById("heroWidgetResult").innerText = `Total Hero Widgets: ${widgets}`;
     }
 
