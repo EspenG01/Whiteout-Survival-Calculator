@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whiteout Survival Upgrade Planner</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select { margin: 5px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h2>HQ Upgrade Resource Calculator</h2>
+
+  <label>Current HQ Level:
+    <select id="currentLevel"></select>
+  </label><br>
+
+  <label>Desired HQ Level:
+    <select id="desiredLevel"></select>
+  </label><br>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <h3>Resources Needed:</h3>
+  <div id="result"></div>
+
+  <script>
+    const resourceTable = {
+      11: { wood: 10000, steel: 5000, food: 8000 },
+      12: { wood: 15000, steel: 8000, food: 12000 },
+      13: { wood: 20000, steel: 12000, food: 15000 },
+      14: { wood: 25000, steel: 16000, food: 20000 },
+      15: { wood: 30000, steel: 20000, food: 25000 },
+      // ... add more levels as needed
+    };
+
+    const currentSelect = document.getElementById('currentLevel');
+    const desiredSelect = document.getElementById('desiredLevel');
+
+    for (let i = 1; i <= 30; i++) {
+      currentSelect.innerHTML += `<option value="${i}">${i}</option>`;
+      desiredSelect.innerHTML += `<option value="${i}">${i}</option>`;
+    }
+
+    function calculate() {
+      const curr = parseInt(currentSelect.value);
+      const dest = parseInt(desiredSelect.value);
+      let wood = 0, steel = 0, food = 0;
+
+      for (let lvl = curr + 1; lvl <= dest; lvl++) {
+        if (resourceTable[lvl]) {
+          wood += resourceTable[lvl].wood || 0;
+          steel += resourceTable[lvl].steel || 0;
+          food += resourceTable[lvl].food || 0;
+        }
+      }
+
+      document.getElementById('result').innerText =
+        `Wood: ${wood} | Steel: ${steel} | Food: ${food}`;
+    }
+  </script>
+</body>
+</html>
