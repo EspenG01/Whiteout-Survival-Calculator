@@ -5,38 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whiteout Survival Upgrade Planner</title>
   <style>
+    /* Layout */
     body {
       font-family: Arial, sans-serif;
       margin: 0 auto;
       max-width: 650px;
-      background-color: #f9f9f9;
+      background: #f0f2f5;
       padding: 20px;
     }
-    h1, h2, h3 { text-align: center; }
-    .tabs { text-align: center; margin-bottom: 20px; }
+    h1, h2, h3 { text-align: center; margin: 0 0 15px; }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
     .tabs button {
-      background: #ddd;
+      flex: 1 1 auto;
+      max-width: 120px;
+      background: #4A90E2;
+      color: #fff;
       border: none;
-      padding: 10px 15px;
-      margin: 3px;
+      border-radius: 4px;
+      padding: 10px;
       cursor: pointer;
+      transition: background 0.2s;
     }
-    .tabs button.active { background: #bbb; }
+    .tabs button:hover,
+    .tabs button.active { background: #357ABD; }
+    /* Tab panels */
     .tab { display: none; }
-    .tab.active { display: block; }
-    .section { margin-bottom: 20px; }
-    label, select, button {
-      width: 100%;
-      margin-top: 10px;
+    .tab.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in;
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* Section cards */
+    .section {
+      background: #fff;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+    }
+    @media (max-width: 600px) {
+      .section {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Form controls */
+    label { display: block; margin-bottom: 5px; }
     select, button {
+      width: 100%;
       padding: 10px;
       font-size: 1em;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
+    /* Buttons */
+    button.calculate {
+      background: #4A90E2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button.calculate:hover { background: #357ABD; transform: translateY(-1px); }
+    button.calculate:active { transform: translateY(0); }
+    /* Results */
     .result {
       margin-top: 20px;
       font-weight: bold;
-      background-color: #fff;
+      background: #fff;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
@@ -57,170 +107,213 @@
   <!-- BUILDINGS -->
   <div id="buildings" class="tab active">
     <h2>Building Resource Calculator</h2>
-    <label>Building Type:
-      <select id="buildingType">
-        <option>Furnace</option>
-        <option>Embassy</option>
-        <option>Infantry</option>
-        <option>Marksman</option>
-        <option>Lancer</option>
-        <option>CC</option>
-        <option>Infirmary</option>
-        <option>War Academy</option>
-      </select>
-    </label>
-    <label>Current Level:
-      <select id="currentLevel"></select>
-    </label>
-    <label>Desired Level:
-      <select id="desiredLevel"></select>
-    </label>
-    <button onclick="calculateFCs()">Calculate</button>
+    <div class="section">
+      <div>
+        <label>Building Type:</label>
+        <select id="buildingType">
+          <option>Furnace</option>
+          <option>Embassy</option>
+          <option>Infantry</option>
+          <option>Marksman</option>
+          <option>Lancer</option>
+          <option>CC</option>
+          <option>Infirmary</option>
+          <option>War Academy</option>
+        </select>
+      </div>
+      <div>
+        <label>Current Level:</label>
+        <select id="currentLevel"></select>
+      </div>
+      <div>
+        <label>Desired Level:</label>
+        <select id="desiredLevel"></select>
+      </div>
+      <div>
+        <button class="calculate" onclick="calculateFCs()">Calculate</button>
+      </div>
+    </div>
     <div class="result" id="buildingResult"></div>
   </div>
 
   <!-- CHIEF GEAR -->
   <div id="gear" class="tab">
     <h2>Chief Gear Calculator</h2>
-    <label>Current Gear Level:
-      <select id="currentGear"></select>
-    </label>
-    <label>Desired Gear Level:
-      <select id="desiredGear"></select>
-    </label>
-    <button onclick="calculateGear()">Calculate</button>
+    <div class="section">
+      <div>
+        <label>Current Gear Level:</label>
+        <select id="currentGear"></select>
+      </div>
+      <div>
+        <label>Desired Gear Level:</label>
+        <select id="desiredGear"></select>
+      </div>
+      <div style="grid-column: span 2;">
+        <button class="calculate" onclick="calculateGear()">Calculate</button>
+      </div>
+    </div>
     <div class="result" id="gearResult"></div>
   </div>
 
   <!-- CHARMS -->
   <div id="charms" class="tab">
     <h2>Charm Calculator</h2>
-    <label>Current Charm Level:
-      <select id="currentCharm"></select>
-    </label>
-    <label>Desired Charm Level:
-      <select id="desiredCharm"></select>
-    </label>
-    <button onclick="calculateCharms()">Calculate</button>
+    <div class="section">
+      <div>
+        <label>Current Charm Level:</label>
+        <select id="currentCharm"></select>
+      </div>
+      <div>
+        <label>Desired Charm Level:</label>
+        <select id="desiredCharm"></select>
+      </div>
+      <div style="grid-column: span 2;">
+        <button class="calculate" onclick="calculateCharms()">Calculate</button>
+      </div>
+    </div>
     <div class="result" id="charmResult"></div>
   </div>
 
   <!-- HERO SHARDS -->
   <div id="heroShards" class="tab">
     <h2>Hero Shards Calculator</h2>
-    <label>Current Hero Level:
-      <select id="currentHeroShard"></select>
-    </label>
-    <label>Desired Hero Level:
-      <select id="desiredHeroShard"></select>
-    </label>
-    <button onclick="calculateHeroShards()">Calculate</button>
+    <div class="section">
+      <div>
+        <label>Current Hero Level:</label>
+        <select id="currentHeroShard"></select>
+      </div>
+      <div>
+        <label>Desired Hero Level:</label>
+        <select id="desiredHeroShard"></select>
+      </div>
+      <div style="grid-column: span 2;">
+        <button class="calculate" onclick="calculateHeroShards()">Calculate</button>
+      </div>
+    </div>
     <div class="result" id="heroShardResult"></div>
   </div>
 
   <!-- HERO WIDGETS -->
   <div id="heroWidgets" class="tab">
     <h2>Hero Widgets Calculator</h2>
-    <label>Current Widget Level:
-      <select id="currentHeroWidget"></select>
-    </label>
-    <label>Desired Widget Level:
-      <select id="desiredHeroWidget"></select>
-    </label>
-    <button onclick="calculateHeroWidgets()">Calculate</button>
+    <div class="section">
+      <div>
+        <label>Current Widget Level:</label>
+        <select id="currentHeroWidget"></select>
+      </div>
+      <div>
+        <label>Desired Widget Level:</label>
+        <select id="desiredHeroWidget"></select>
+      </div>
+      <div style="grid-column: span 2;">
+        <button class="calculate" onclick="calculateHeroWidgets()">Calculate</button>
+      </div>
+    </div>
     <div class="result" id="heroWidgetResult"></div>
   </div>
 
   <!-- WAR ACADEMY -->
   <div id="warAcademy" class="tab">
     <h2>War Academy Upgrades</h2>
-    <div class="section"><h3>Flame Squad</h3>
-      <label>Current Level:
+    <!-- Repeat for each of the 10 upgrades -->
+    <div class="section">
+      <h3>Flame Squad</h3>
+      <div>
+        <label>Current Level:</label>
         <select id="flameSquadCurrent"></select>
-      </label>
-      <label>Desired Level:
+      </div>
+      <div>
+        <label>Desired Level:</label>
         <select id="flameSquadDesired"></select>
-      </label>
+      </div>
     </div>
-    <div class="section"><h3>Lethality</h3>
-      <label>Current Level:
+    <div class="section">
+      <h3>Lethality</h3>
+      <div>
+        <label>Current Level:</label>
         <select id="lethalityCurrent"></select>
-      </label>
-      <label>Desired Level:
+      </div>
+      <div>
+        <label>Desired Level:</label>
         <select id="lethalityDesired"></select>
-      </label>
+      </div>
     </div>
     <div class="section"><h3>Health</h3>
-      <label>Current Level:
-        <select id="healthCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="healthDesired"></select>
-      </label>
+        <label>Current Level:
+          <select id="healthCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="healthDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Flame Legion</h3>
+        <label>Current Level:
+          <select id="flameLegionCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="flameLegionDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Attack</h3>
+        <label>Current Level:
+          <select id="attackCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="attackDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Defense</h3>
+        <label>Current Level:
+          <select id="defenseCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="defenseDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Helios</h3>
+        <label>Current Level:
+          <select id="heliosCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="heliosDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Healing</h3>
+        <label>Current Level:
+          <select id="healingCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="healingDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>Training</h3>
+        <label>Current Level:
+          <select id="trainingCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="trainingDesired"></select>
+        </label>
+      </div>
+      <div class="section"><h3>First Aid</h3>
+        <label>Current Level:
+          <select id="firstAidCurrent"></select>
+        </label>
+        <label>Desired Level:
+          <select id="firstAidDesired"></select>
+        </label>
+      </div>
+      <button onclick="calculateWarAcademy()">Calculate</button>
+      <div class="result" id="warAcademyResult"></div>
     </div>
-    <div class="section"><h3>Flame Legion</h3>
-      <label>Current Level:
-        <select id="flameLegionCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="flameLegionDesired"></select>
-      </label>
+    <div style="text-align:center;">
+      <button class="calculate" onclick="calculateWarAcademy()">Calculate War Academy</button>
     </div>
-    <div class="section"><h3>Attack</h3>
-      <label>Current Level:
-        <select id="attackCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="attackDesired"></select>
-      </label>
-    </div>
-    <div class="section"><h3>Defense</h3>
-      <label>Current Level:
-        <select id="defenseCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="defenseDesired"></select>
-      </label>
-    </div>
-    <div class="section"><h3>Helios</h3>
-      <label>Current Level:
-        <select id="heliosCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="heliosDesired"></select>
-      </label>
-    </div>
-    <div class="section"><h3>Healing</h3>
-      <label>Current Level:
-        <select id="healingCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="healingDesired"></select>
-      </label>
-    </div>
-    <div class="section"><h3>Training</h3>
-      <label>Current Level:
-        <select id="trainingCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="trainingDesired"></select>
-      </label>
-    </div>
-    <div class="section"><h3>First Aid</h3>
-      <label>Current Level:
-        <select id="firstAidCurrent"></select>
-      </label>
-      <label>Desired Level:
-        <select id="firstAidDesired"></select>
-      </label>
-    </div>
-    <button onclick="calculateWarAcademy()">Calculate</button>
     <div class="result" id="warAcademyResult"></div>
   </div>
 
   <script>
-    // -- Data --
-    const buildingLevels = ["Fc5","Fc5-1","Fc5-2","Fc5-3","Fc5-4","Fc6","Fc6-1","Fc6-2","Fc6-3","Fc6-4",
+// -- Data --
+const buildingLevels = ["Fc5","Fc5-1","Fc5-2","Fc5-3","Fc5-4","Fc6","Fc6-1","Fc6-2","Fc6-3","Fc6-4",
       "Fc7","Fc7-1","Fc7-2","Fc7-3","Fc7-4","Fc8","Fc8-1","Fc8-2","Fc8-3","Fc8-4",
       "Fc9","Fc9-1","Fc9-2","Fc9-3","Fc9-4","Fc10"];
     const fcCosts = {"Fc5":0,"Fc5-1":200,"Fc5-2":200,"Fc5-3":200,"Fc5-4":200,
